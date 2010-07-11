@@ -853,6 +853,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		return \$this
 			->use{$relationName}Query()
 				->filterBy{$relName}($objectName, \$comparison)
+				->filterByDeletedAt(null)
 			->endUse();
 	}
 	";

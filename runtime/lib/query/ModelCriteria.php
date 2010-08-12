@@ -380,6 +380,26 @@ class ModelCriteria extends Criteria
 		
 		return $this;
 	}
+
+    /**
+	 * Adds an ORDER BY RANDOM clause to the query, randomizing the order of the result set
+     *
+	 * @param int $seed A number to initiate the random generator
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+    public function orderByRandom($seed = null)
+    {
+        if(null == $seed)
+        {
+          $seed = rand();
+        }
+
+        $adapter = Propel::getDB($this->getDbName());
+        $this->addAscendingOrderByColumn($adapter->random($seed));
+
+        return $this;
+    }
 	
 	/**
 	 * Adds a GROUB BY clause to the query

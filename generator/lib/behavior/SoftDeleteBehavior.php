@@ -84,6 +84,21 @@ public function unDelete(PropelPDO \$con = null)
 	{
 		return <<<EOT
 if (!empty(\$ret) && {$builder->getStubQueryBuilder()->getClassname()}::isSoftDeleteEnabled()) {
+	///  Cascade Soft Delete to Many-To-Many Objects  ///
+	// Iterate over model fields, looking for collections
+	foreach ( get_object_vars(\$this) as \$foreign => \$null ) {
+		// If it's not a collection of many-to-many models, ignore it
+		\$regex = sprintf( '#coll(%ss.+)#', get_class(\$this) );
+		if ( ! preg_match(\$regex,\$foreign,\$match) )
+			continue;
+		// Get a collection of the models
+		\$func = sprintf( 'get%s', \$match[1] );
+		\$aModel = \$this->\$func();
+		// Iterate over the collection and delete them
+		foreach ( \$aModel as \$oModel )
+			\$oModel->delete();
+	}
+	//////////
 	\$this->{$this->getColumnSetter()}(time());
 	\$this->save(\$con);
 	\$con->commit();

@@ -127,7 +127,18 @@ class PropelObjectCollection extends PropelCollection
 			$key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
 			$ret[$key] = $obj->toArray();
 		}
-		
+		return $ret;
+	}
+	
+	public function toPublicArray($keyColumn = null, $usePrefix = false)
+	{
+		$ret = array();
+		$keyGetterMethod = 'get' . $keyColumn;
+		foreach ($this as $key => $obj) {
+			$key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
+			$key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
+			$ret[$key] = $obj->toPublicArray();
+		}
 		return $ret;
 	}
 	
